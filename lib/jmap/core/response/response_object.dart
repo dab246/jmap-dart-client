@@ -1,4 +1,6 @@
+import 'dart:convert';
 import 'dart:developer' as developer;
+import 'dart:developer';
 
 import 'package:equatable/equatable.dart';
 import 'package:jmap_dart_client/http/converter/response_invocation_converter.dart';
@@ -37,7 +39,13 @@ class ResponseObject with EquatableMixin {
       throw ErrorMethodResponseException(errorResponse);
     }
 
-    return fromJson(matchedResponse.arguments.value);
+    final argumentsValue = matchedResponse.arguments.value is Map
+      ? matchedResponse.arguments.value
+      : jsonEncode(matchedResponse.arguments.value);
+
+    log('ResponseObject::parse(): argumentsValue: $argumentsValue');
+
+    return fromJson(argumentsValue);
   }
 
   bool _validMethodResponseName(ResponseInvocation responseInvocation, MethodName methodName) {
